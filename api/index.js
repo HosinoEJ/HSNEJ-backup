@@ -10,12 +10,11 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// 設定 EJS 和靜態資源
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname,'..', 'views'));
 app.use(express.static(path.join(__dirname,'..', 'public')));
 
-// 預處理 Markdown
+// Markdown 處理
 app.use((req, res, next) => {
   res.locals.renderMarkdown = (name) => {
     const filePath = path.join(__dirname,'..', 'public', 'md', `${name}.md`);
@@ -43,7 +42,7 @@ app.get('/page', (req, res) => {
   res.render(name, { ...req.query });
 });
 
-// /port-list 路由
+// /port-list
 app.get('/port-list', (req, res) => {
   const protDir = path.join(__dirname,'..', 'public', 'prot');
   fs.readdir(protDir, (err, files) => {
@@ -59,7 +58,7 @@ app.get('/port-list', (req, res) => {
   });
 });
 
-// /port/:id 路由
+// /port/:id
 app.get('/port/:id', (req, res) => {
   const mdName = req.params.id;
   const mdPath = path.join(__dirname,'..', 'public', 'prot', `${mdName}.md`);
@@ -71,7 +70,5 @@ app.get('/port/:id', (req, res) => {
   res.render('port', { reports: [report] });
 });
 
-// 不需要 app.listen()，Vercel Serverless 自動處理
-
-// 將 handler 導出
-export const handler = serverless(app);
+// ✅ Vercel Serverless 要求預設導出
+export default serverless(app);
