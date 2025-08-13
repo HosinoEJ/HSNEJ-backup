@@ -12,6 +12,7 @@
             width: 100% !important;
             margin: 16px 0;
             padding: 10px;
+            min-height: 120px;
             
         }
     </style></head>
@@ -21,7 +22,11 @@
         <%- include('partials/header') %>
         <section class="list">
             <% reports.forEach(report => { %>
-                <h2 class="DivStyle-Glass"><%= report.title %> (<%= report.language %>, <%= report.time %>)</h2>
+                <h2 class="DivStyle-Glass">
+                    <a href="/port/<%= report.filenames %>">
+                        <%= report.title %> (發佈日期：<%= report.time %>，語言：<%= report.language %>)
+                    </a>
+                </h2>
             <% }) %>
         </section>
         <%- include('partials/bg-setting') %>

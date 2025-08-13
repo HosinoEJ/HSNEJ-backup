@@ -23,25 +23,29 @@ app.use((req, res, next) => {
 });
 
 app.get('/', (req, res) => {
-    res.render('index', { 
-        title: '主頁',
-        t: req.t // 傳入翻譯函數給模板
-    });
+    const reports = getReports();
+    res.render('index', { title: '主頁', t: req.t, reports });
 });
 // 通用 EJS 渲染路由
-app.get('/page', (req, res) => {
-    const name = req.query.name;
-    if (!name) return res.status(400).send('Missing page name');
-    const filePath = path.join(__dirname, 'views', `${name}.ejs`);
-    if (!fs.existsSync(filePath)) return res.status(404).send('Page not found');// 檢查文件是否存在
-    // 特殊處理 port.ejs 需要 reports
-    if (name === 'port') {// 重定向到報告頁面
-        return res.redirect('/port-list');
-    } else {
-        res.render(name, { ...req.query, t: req.t });
-    }
+
+app.get('/port-list', (req, res) => {
+    const reports = getReports();
+    res.render('port-list', { reports, t: req.t });
 });
 
+// 共用函數
+function getReports() {
+    const protDir = path.join(__dirname,'..', 'public', 'prot');
+    if (!fs.existsSync(protDir)) return [];
+    const files = fs.readdirSync(protDir).filter(f => f.endsWith('.md'));
+    return files.map(filename => {
+        const filenames = filename.replace('.md','');
+        const [language, time, ...titleArr] = filename.replace('.md','').split('.');
+        const title = titleArr.join('.');
+        const content = fs.readFileSync(path.join(protDir, filename), 'utf-8');
+        return { language, time, title, filenames, html: marked.parse(content) };
+    });
+}
 
 
 // 新增報告頁面路由
@@ -98,12 +102,12 @@ app.get('/port/:id', (req, res) => {
     res.render('port', { reports: [report], t: req.t });
 });
 
-/*
+
 if (process.env.VERCEL_ENV !== 'production') {
     app.listen(3000, () => {
         console.log('本地開發伺服器已啟動 http://localhost:3000');
     });
-}*/
+}
 
 
 module.exports = app;

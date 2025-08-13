@@ -49,6 +49,9 @@
     font-size: 25px;
 }
 
+.list *{
+    margin-bottom: 10px;
+}
 
 .Text-content{
     display: flex;

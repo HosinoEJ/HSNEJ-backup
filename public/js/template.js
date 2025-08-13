@@ -18,7 +18,7 @@ fetch('../template.html')
         timestamp: Date.now(),
     }));
     // 跳转到 hsnej.html
-    window.location.href = 'hsnej.html';
+    window.location.href = 'port/hsnej';
 };
 
 
