@@ -98,12 +98,12 @@ app.get('/port/:id', (req, res) => {
     res.render('port', { reports: [report], t: req.t });
 });
 
-
+/*
 if (process.env.VERCEL_ENV !== 'production') {
     app.listen(3000, () => {
         console.log('本地開發伺服器已啟動 http://localhost:3000');
     });
-}
+}*/
 
 
 module.exports = app;
