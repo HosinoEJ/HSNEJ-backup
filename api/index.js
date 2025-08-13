@@ -1,8 +1,12 @@
-const express = require('express');// 引入 express 框架
-const path = require('path');// 引入 path 模組
-const fs = require('fs');// 引入 fs 模組
-const marked = require('marked');// 引入 marked 模組，用於將 Markdown 轉換為 HTML
-const serverless = require('serverless-http');
+import express from 'express';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+import { marked } from 'marked';
+import serverless from 'serverless-http';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 app.set('view engine', 'ejs');
