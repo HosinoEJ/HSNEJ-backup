@@ -1,6 +1,6 @@
 import express from 'express';
 import path from 'path';
-import fs from 'fs';
+import fs from 'fs/promises';
 import { fileURLToPath } from 'url';
 import { marked } from 'marked';
 import serverless from 'serverless-http';
@@ -43,19 +43,21 @@ app.get('/page', (req, res) => {
 });
 
 // /port-list
-app.get('/port-list', (req, res) => {
+app.get('/port-list', async (req, res) => {
   const protDir = path.join(__dirname,'..', 'public', 'prot');
-  fs.readdir(protDir, (err, files) => {
-    if (err) return res.status(500).send('報告目錄錯誤');
+  try {
+    const files = await fs.readdir(protDir);
     const mdFiles = files.filter(f => f.endsWith('.md'));
-    const reports = mdFiles.map(filename => {
+    const reports = await Promise.all(mdFiles.map(async filename => {
       const [language, time, ...titleArr] = filename.replace('.md','').split('.');
       const title = titleArr.join('.');
-      const content = fs.readFileSync(path.join(protDir, filename), 'utf-8');
+      const content = await fs.readFile(path.join(protDir, filename), 'utf-8');
       return { language, time, title, html: marked.parse(content) };
-    });
+    }));
     res.render('port-list', { reports });
-  });
+  } catch(err) {
+    res.status(500).send('報告目錄錯誤');
+  }
 });
 
 // /port/:id
